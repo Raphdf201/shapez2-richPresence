@@ -1,0 +1,22 @@
+{
+  "Version": "0.0.1",
+  "Title": "Rich presence",
+  "Description": "This mod adds discord rich presence",
+  "Author": "Raphdf201",
+  "SavedModVersionCompabilityRangeWithSelf": "*",
+  "GameVersionSupportRange": "*",
+  "AffectsSaveGames": false,
+  "DisablesAchievements": false,
+  "Conflicts": [],
+  "IconPath": "",
+  "Assemblies": [
+    "shapez2RichPresence.dll"
+  ],
+  "Dependencies": [
+    {
+      "ModId": "local:ShapezShifter",
+      "ModTitle": "Shapez Shifter",
+      "Version": ">=0.10.0"
+    }
+  ]
+}
