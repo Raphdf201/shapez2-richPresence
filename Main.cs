@@ -1,4 +1,5 @@
 ﻿using Core.Localization;
+using Core.Logging;
 using Discord;
 using ShapezShifter.Flow;
 
@@ -12,9 +13,13 @@ public class Main : IMod
     private string _scenario = "";
     private int _buildings;
 
-    public Main()
+    public Main(ILogger logger)
     {
-        if (!File.Exists(SdkDownloader.GetTargetSdkLocation())) SdkDownloader.DownloadSdk();
+        if (!File.Exists(SdkDownloader.GetTargetSdkLocation()))
+        {
+            logger.Info?.Log("Dowloading discord sdk");
+            SdkDownloader.DownloadSdk(logger);
+        }
         this.RunPeriodically(Periodic);
         this.RegisterConsoleCommand("stats", context =>
         {

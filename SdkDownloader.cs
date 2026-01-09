@@ -1,18 +1,20 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Core.Logging;
 
 namespace shapez2RichPresence;
 
 public static class SdkDownloader
 {
-    internal static void DownloadSdk()
+    internal static void DownloadSdk(ILogger logger)
     {
         using HttpClient client = new();
         // Download the file
         var fileBytes = client.GetByteArrayAsync(GetTargetSdkUrl()).GetAwaiter().GetResult();
-
+        var loc = GetTargetSdkLocation();
+        logger.Info?.Log($"Saving SDK to {loc}");
         // Save to disk
-        File.WriteAllBytes(GetTargetSdkLocation(), fileBytes);
+        File.WriteAllBytes(loc, fileBytes);
     }
 
     internal static string GetTargetSdkLocation()
