@@ -9,10 +9,8 @@ public static class SdkDownloader
     {
         using HttpClient client = new();
         // Download the file
-        var dl = client.GetByteArrayAsync(GetTargetSdkUrl());
-        dl.Wait();
-        var fileBytes = dl.Result;
-        
+        var fileBytes = client.GetByteArrayAsync(GetTargetSdkUrl()).GetAwaiter().GetResult();
+
         // Save to disk
         File.WriteAllBytes(GetTargetSdkLocation(), fileBytes);
     }
