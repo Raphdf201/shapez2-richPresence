@@ -6,14 +6,15 @@ namespace shapez2RichPresence;
 
 public class Main : IMod
 {
-    private static readonly Discord.Discord Discord = new(1458910861564313776, (ulong)CreateFlags.NoRequireDiscord);
-    private static int _ticksSinceLastUpdate;
-    private static float _totalPlayTime;
-    private static string _scenario = "";
-    private static int _buildings;
+    private readonly Discord.Discord _discord = new(1458910861564313776, (ulong)CreateFlags.NoRequireDiscord);
+    private int _ticksSinceLastUpdate;
+    private float _totalPlayTime;
+    private string _scenario = "";
+    private int _buildings;
 
     public Main()
     {
+        if (!File.Exists(SdkDownloader.GetTargetSdkLocation())) SdkDownloader.DownloadSdk();
         this.RunPeriodically(Periodic);
         this.RegisterConsoleCommand("stats", context =>
         {
@@ -24,9 +25,14 @@ public class Main : IMod
         this.RegisterConsoleCommand("update", _ => UpdateActivity());
     }
 
-    private static void UpdateActivity()
+    public void Dispose()
     {
-        Discord.GetActivityManager().UpdateActivity(new Activity
+        _discord.Dispose();
+    }
+
+    private void UpdateActivity()
+    {
+        _discord.GetActivityManager().UpdateActivity(new Activity
         {
             State = "In game",
             Details = _scenario + " - " + _buildings + " buildings",
@@ -37,10 +43,10 @@ public class Main : IMod
                 SmallImage = "https://cdn.impress.games/presskits/b05b8fc32a22c183a871c2d84a102828/logos/3.png",
                 SmallText = _totalPlayTime / 60 / 60 + " hours"
             }
-        }, _ => {});
+        }, _ => { });
     }
 
-    private static void Periodic(GameSessionOrchestrator orchestrator, float deltaTick)
+    private void Periodic(GameSessionOrchestrator orchestrator, float deltaTick)
     {
         _scenario = orchestrator.DependencyContainer.TryResolve<ILocalizationResolver>(out var resolver)
             ? orchestrator.Mode.Scenario.Title.Build(resolver, null)
@@ -54,12 +60,7 @@ public class Main : IMod
             UpdateActivity();
             _ticksSinceLastUpdate = 0;
         }
-        
-        Discord.RunCallbacks();
-    }
 
-    public void Dispose()
-    {
-        Discord.Dispose();
+        _discord.RunCallbacks();
     }
 }
